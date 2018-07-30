@@ -1,0 +1,556 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>Rotating 45� imagery</title>
+ 
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjirnCRdDAv6i7w-88vCKVXA6D5CK4rsk&libraries=places&callback=initMap">
+    </script>
+   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+      * element that contains the map. */
+      #map {
+        height: 80%;
+        width:80%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #description {
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+      }
+
+      #infowindow-content .title {
+        font-weight: bold;
+      }
+
+      #infowindow-content {
+        display: none;
+      }
+
+      #map #infowindow-content {
+        display: inline;
+      }
+      .day{
+        cursor:pointer;
+        background: mintcream;
+        height:70%;
+        margin:7px;
+        border:1px solid #aaa;
+        padding:10px;
+        width:200px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        font-family: Roboto;
+        border-radius:10px;
+      }
+      .pac-card {
+        margin: 10px 10px 0 0;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        background-color: #fff;
+        font-family: Roboto;
+      }
+
+      #pac-container {
+        padding-bottom: 12px;
+        margin-right: 12px;
+
+
+      }
+
+      .pac-controls {
+        display: inline-block;
+        padding: 5px 5px;
+        margin-top:5px;
+      }
+
+      .pac-controls label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 2%;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width:80%;
+
+      }
+
+      #pac-input:focus {
+        border-color: red;
+      }
+
+      #title {
+        color: #fff;
+        background-color: #4d90fe;
+        font-size: 15px;
+        font-weight: 500;
+        padding: 6px 12px;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" style='float:left;'></div>
+    <div class="pac-card" id="pac-card">
+      <div>
+        <div id="title">
+          My favorite travel experiences
+        </div>
+        <div id="type-selector" class="pac-controls">
+          <input type="radio" name="type" id="changetype-all" checked="checked">
+          <label for="changetype-all">All</label>
+
+          <input type="radio" name="type" id="changetype-establishment">
+          <label for="changetype-establishment">Establishments</label>
+          <!--
+<input type="radio" name="type" id="changetype-address">
+<label for="changetype-address">Addresses</label>
+
+<input type="radio" name="type" id="changetype-geocode">
+<label for="changetype-geocode">Geocodes</label>
+-->
+        </div>
+        <div id="strict-bounds-selector" class="pac-controls">
+          <input type="checkbox" id="use-strict-bounds" value="">
+          <label for="use-strict-bounds">Strict Bounds</label>
+        </div>
+      </div>
+      <div id="pac-container">
+        <input id="pac-input" type="text"
+               placeholder="Enter a location">
+      </div>
+    </div>
+    <div id="postResultDiv">
+      </div>
+        <br>
+
+    <div id="summary_box" style='float:left;border:1px solid #aaa; height:18%;width:99%;margin:5px;background:darkkhaki'>
+
+    </div>
+
+    <script>
+      var marker_id=-1;
+      var map;
+      var markers = new Array();
+      var curr_loc=0
+      var info_windows =new Array();
+      var info_window_html = ''; /*'<img src="" width="16" height="16" id="place-icon">';*/
+      
+      info_window_html +='<tr><td>words  </td><td colspan="3"><textarea id="place-details" class="pac-controls" style="width:300px" rows="2"></textarea>';
+      info_window_html +='</td></tr><tr><td></td><td><input type="button" value="save" onclick="save_info_data();"/></td></tr></tr></table>';
+     
+      var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+      var icons = {
+        hindu_temple: {
+          icon: 'http://maps.google.com/mapfiles/kml/pal3/icon23.png'
+        },	
+        amusement_park: {
+          icon: 'http://maps.google.com/mapfiles/kml/pal2/icon4.png'
+        },
+        aquarium: {
+          icon: 'http://maps.google.com/mapfiles/kml/pal4/icon35.png'
+        },
+        zoo: {
+          icon: 'http://maps.google.com/mapfiles/kml/pal5/icon1.png'
+        },
+        art_gallery: {
+          icon: 'http://maps.google.com/mapfiles/kml/pal2/icon30.png'
+        },
+        shopping_mall: {
+          icon: 'http://maps.google.com/mapfiles/kml/pal3/icon18.png'
+        }
+      };
+      var last_place_search_type="";
+      function SearchPlace(value){
+        deleteNearByMarkers();
+        if(value==""){
+          return;
+        }
+        last_place_search_type=value;
+        console.log("search called for:"+value);
+        var kms=Number("0"+document.getElementById("search_radius").value)*1000;
+        nearby_infowindow = new google.maps.InfoWindow();
+        var service = new google.maps.places.PlacesService(map);
+        service.nearbySearch({
+          location: markers[marker_id].getPosition(),
+          radius: kms,
+          type: [value]
+        }, PlaceCallback);
+      }
+      function PlaceCallback(results, status) {
+        console.log("Search Results");
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          for (var i = 0; i < results.length; i++) {
+            console.log(results[i]);
+            createMarker(results[i]);
+          }
+        }
+      }
+      var nearby_infowindow;
+      var nearbyMarkers=new Array();
+      function createMarker(place) {
+        var placeLoc = place.geometry.location;
+        var icon=null;
+
+        if(last_place_search_type=="hindu_temple" || last_place_search_type=="aquarium" || last_place_search_type=="zoo" || last_place_search_type=="amusement_park" || last_place_search_type=="shopping_mall" || last_place_search_type=="art_gallery"){
+          icon=icons[last_place_search_type].icon;
+        }
+        var marker = new google.maps.Marker({
+          map: map,
+          animation: google.maps.Animation.DROP,
+          position: place.geometry.location,
+          icon:icon,
+
+        });
+        google.maps.event.addListener(marker, 'click', function() {
+          nearby_infowindow.setContent(place.name);
+          nearby_infowindow.open(map, this);
+        });
+        marker.setVisible(true);
+        nearbyMarkers.push(marker);
+        /*
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.setContent(place.name);
+				infowindow.open(map, this);
+			});
+			*/
+      }
+
+      function deleteNearByMarkers(){
+        for (var i = 0; i < nearbyMarkers.length; i++) {
+          nearbyMarkers[i].setMap(null);
+        }
+        nearbyMarkers=new Array();
+      }
+
+      var curr_day=0;
+
+      var places = [
+        {lat: 26.1050606, lng: 91.5810472,heading:"Arrival (12:30 PM)",text:"After arriving at the airport at Guwahati, a shuttle service at 1:00pm will transfer you from the airport to the main city, where you can have a complimentary lunch"},
+        {lat: 25.670829, lng: 91.902708,heading:"Photography at Umiam Lake (01:45 PM)", text:"Once you�ve had your lunch, the drive to Shillong will commence, with an optional stopover enroute at a photography point where you can capture some pictures of the Umiam Lake"},
+        {lat: 25.580880, lng: 91.886714,heading:"Hotel Checkin, Rest & Leisure (04:00 PM)",text:"When you arrive at Shillong, check into your hotel and relax for a bit before having your complimentary dinner and turning in for the night at your hotel in Shillong"}
+      ];
+
+      //window.setTimeout(play,2000);
+   
+      function save_info_data(){
+
+        var info = {
+                    
+                    "details":document.getElementById('place-details').value,
+                    "marker_id":marker_id,
+                    "position":marker.position
+                    
+                   }
+                   
+        //console.log(info);
+        info_windows.push(info);
+        //console.log(marker_id);
+        //console.log(markers[marker_id].getPosition())
+        markers[marker_id].infowindow.close();
+        
+   
+        //RecreateDays();
+
+      }
+      function RecreateDays(){
+        var lastDay=0;
+        var html="";
+        for (var i = 0; i < info_windows.length; i++) {
+          if(info_windows[i]["day"]!=lastDay){
+            html+="<div class='day' id='_day_"+info_windows[i]["day"]+"_"+info_windows[i]["marker_id"]+"'>Day "+info_windows[i]["day"]+"<br>"+info_windows[i]["place"]+"</div>"
+          }
+        }
+        document.getElementById("summary_box").innerHTML=html;
+        console.log(html);
+      }
+
+      function play(){
+        deleteMarkers();
+        placeMarker(places[curr_loc]["lat"],places[curr_loc]["lng"],places[curr_loc]["heading"],places[curr_loc]["text"]);
+        if(curr_loc==1){
+          //showLine();
+        }
+        curr_loc+=1;
+        //if(curr_loc<places.length){window.setTimeout(play,10000);}
+        //readDays();
+      }
+
+      function readDays(){
+        //alert(days[0]["head"]);
+        //alert(days[0]["items"]);
+      }
+
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 25.960281, lng: 91.853323}, 
+          zoom: 4,
+          mapTypeId: google.maps.MapTypeId.HYBRID,
+          heading: 90,
+          tilt: 45
+        });
+
+        var card = document.getElementById('pac-card');
+        var input = document.getElementById('pac-input');
+        var types = document.getElementById('type-selector');
+        var strictBounds = document.getElementById('strict-bounds-selector');
+
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+        
+        ajaxGetSignature();
+        //alert(markers.length);
+      //showLine(markers);
+        
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        // Bind the map's bounds (viewport) property to the autocomplete object,
+        // so that the autocomplete requests use the current map bounds for the
+        // bounds option in the request.
+        autocomplete.bindTo('bounds', map);
+        /*
+        var marker = new google.maps.Marker({
+          map: map,
+          anchorPoint: new google.maps.Point(0, -29)
+        });
+		*/
+        autocomplete.addListener('place_changed', function() {
+          //infowindow.close();
+          //marker.setVisible(false);
+          var place = autocomplete.getPlace();
+          if (!place.geometry) {
+            // User entered the name of a Place that was not suggested and
+            // pressed the Enter key, or the Place Details request failed.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+          }
+
+          // If the place has a geometry, then present it on a map.
+          if (place.geometry.viewport) {
+            //map.fitBounds(place.geometry.viewport);
+          } else {
+            //map.setCenter(place.geometry.location);
+            //map.setZoom(9);  
+          }
+          PlaceMarker2(place.geometry.location);
+        });
+
+        //buildDays();
+      }
+
+      function PlaceMarker2(location){
+        console.log(location);
+        console.log(location.lat());
+        console.log(location.lng());
+        var dot = {"lat": location.lat(),"lng":location.lng()};
+        //get the statename
+        var lat = "43.7667855" ;
+        var long = "-79.2157321" ;
+        var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+location.lat()+","+location.lng()+"&sensor=false";
+        console.log(url);
+        $.ajax({
+                type : "POST",
+                contentType : "application/json",
+                url : 'http://localhost:8080/addDot',
+                data : JSON.stringify(dot),
+                dataType : 'json',
+                success : function(dot) {
+                          
+                          $("#postResultDiv").html("<p>" + 
+                    "Post Successfully! <br>" +
+                              "--->" + JSON.stringify(dot)+ "</p>"); 
+                              
+                },
+                error : function(e) {
+                  alert(e)
+                  console.log("ERROR: ", e);
+                }
+              });
+
+        /*
+		$.get(url).success(function(data) {
+		   var loc1 = data.results[0];
+		   var county, city;
+			 $.each(loc1, function(k1,v1) {
+				if (k1 == "address_components") {
+				   for (var i = 0; i < v1.length; i++) {
+					  for (k2 in v1[i]) {
+						 if (k2 == "types") {
+							var types = v1[i][k2];
+							if (types[0] =="sublocality_level_1") {
+								county = v1[i].long_name;
+								//alert ("county: " + county);
+							} 
+							if (types[0] =="locality") {
+							   city = v1[i].long_name;
+							   //alert ("city: " + city);
+						   } 
+						 }
+
+					  }          
+
+				   }
+
+				}
+
+			 });
+			 $('#city').html(city); 
+		});
+*/
+
+        ///////////////////////
+        var marker = new google.maps.Marker({
+          position: location,
+          map: map,
+          animation: google.maps.Animation.DROP,
+        });
+        /*
+        google.maps.event.addListener(marker,'click',function() {
+          var this_id=marker.get("id");
+          markers[this_id].infowindow.open(map,markers[this_id]);
+          /*
+			console.log(markers[this_id].infowindow);
+			var content = info_windows[this_id];
+			console.log(content);
+			var infowindow = new google.maps.InfoWindow({
+			  content:content
+			});
+		    infowindow.open(map,marker);
+			
+        });
+      */
+        //marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
+        
+        marker.set("id",++marker_id);
+        markers.push(marker);
+       //alert(markers.length);
+       //showLine(markers);
+       // map.setCenter(markers[marker_id].getPosition());
+        //map.setZoom(10);
+
+        
+      }
+
+      function buildDays(){
+      }
+
+      function showLine(markers)
+      {
+       var coords = []; 
+        for (var i = 0; i < markers.length; i++) {
+          //alert(JSON.stringify(markers[i].position));
+      var obj = JSON.parse(JSON.stringify(markers[i].position));
+      var loc = new google.maps.LatLng(obj.lat, obj.lng);
+
+//alert(obj.lat);
+
+    coords.push(loc);
+        
+        // alert(pos);
+        }
+    
+        
+        
+        var signatureline = new google.maps.Polyline({
+        path: coords,
+          geodesic: true,
+        strokeColor: "#FF00FF",
+        strokeOpacity: 1.0,
+        strokeWeight: 2});
+      
+
+        signatureline.setMap(map);
+  
+      }
+
+      function deleteMarkers(){
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(null);
+        }
+      }
+
+function ajaxGetSignature()
+{
+  $.ajax({
+			type : "GET",
+			url : 'http://localhost:8080/drawsignature',
+			success: function(result){
+        $.each(result, function(i, dot){
+          var marker = new google.maps.Marker({
+          position: dot,
+          map: map,
+          animation: google.maps.Animation.DROP,
+          
+        });
+        marker.setVisible(true);
+        markers.push(marker);
+        //
+				//	$('#getResultDiv .list-group').append(student.student + " " + student.age + "<br>")
+        });
+       showLine(markers);
+			},
+			error : function(e) {
+			
+				console.log("ERROR: ", e);
+			}
+		});
+
+}
+      function placeMarker(lat, lng,head, text,img) {
+        //deleteMarkers();
+        var location = new google.maps.LatLng(lat,lng);
+        var marker = new google.maps.Marker({
+          position: location,
+          map: map
+        });
+        var content="";
+        if(img!=null){
+          content += "<img src='"+img+"' style='height:75px;'></img>";
+        }
+        content +=  "<h3>"+head+"</h3><h4>"+text+"</h4>";
+        var infowindow = new google.maps.InfoWindow({
+          content: content/*'Latitude: ' + location.lat() + '<br>Longitude: ' + location.lng()*/
+          /*,pixelOffset: new google.maps.Size(200,0)*/
+        });
+        infowindow.open(map,marker);
+        markers.push(marker);
+      }
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+ <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	
+<script>
+			$(document).ready(function() {
+
+                $("#list").click(function(event){
+		event.preventDefault();
+		ajaxGet();
+	});
+    function ajaxGet(){
+		$.ajax({
+			type : "GET",
+			url : 'http://localhost:8080/thelist',
+			success: function(result){
+				$('#getResultDiv ul').empty();
+				var stulist = "";
+				$.each(result, function(i, student){
+					$('#getResultDiv .list-group').append(student.student + " " + student.age + "<br>")
+				});
+				console.log("Success: ", result);
+			},
+			error : function(e) {
+				$("#getResultDiv").html("<strong>Error</strong>");
+				console.log("ERROR: ", e);
+			}
+		});	
+	}
+
+
+                $("#add").click(function(){
+                  
+        var formdata = 
+        { name: $("#name").val(),
+          age: $("#age").val()
+        }
+                
+                    $.ajax({
+			type : "POST",
+			contentType : "application/json",
+			url : 'http://localhost:8080/addstudent',
+			data : JSON.stringify(formdata),
+			dataType : 'json',
+			success : function(student) {
+                
+                $("#postResultDiv").html("<p>" + 
+					"Post Successfully! <br>" +
+                    "--->" + JSON.stringify(student)+ "</p>"); 
+                    ajaxGet();
+			},
+			error : function(e) {
+				alert(e)
+				console.log("ERROR: ", e);
+			}
+		});
+});
+		});    
+	</script>
+ </head>
+ <body>
+   
+  First name:<br>
+  <input id = 'name' type="text" name="firstname" value="Mickey">
+  <br>
+  Last name:<br>
+  <input id = 'age' type="text" name="lastname" value="Mouse">
+  <br><br>
+  <input id = 'add' type="submit" value="Add">
+  <input id = 'list' type="submit" value="See List">
+
+  <div id="postResultDiv">
+  </div>
+    <br>
+    
+  <div id="getResultDiv">
+        <ul class="list-group">
+        </ul>
+    </div>
+ </body>
+</html>

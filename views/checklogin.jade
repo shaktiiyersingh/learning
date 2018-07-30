@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    h3.
+        Check user login
+    form#form_add_student(name="checklogin",method="post",action="/checklogin")
+            span Username
+            input#input_uname(type="text",placeholder="uname",name="uname")
+            br
+            br
+            span Password
+            input#input_password(type="text",placeholder="password",name = "password")
+            br
+            br
+            button#submit_student(type="submit") submit
+
