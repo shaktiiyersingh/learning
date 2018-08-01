@@ -9,11 +9,11 @@ router.get('/', function(req, res, next) {
 });
 router.get('/thelist',function(req,res){
   var MongoClient = mongodb.MongoClient;
-  var url = 'mongodb://localhost:27017/sampsite';
+  var url = 'mongodb://monuser:monpass999@ds245150.mlab.com:45150/mondb';
   MongoClient.connect(url,function(err,client){
     if(err){console.log('connection not happening');}
     else{
-    var db = client.db('sampsite');
+    var db = client.db('mondb');
    var collection = db.collection('students');
    collection.find({}).toArray(function(err,result){
      if(err){}
@@ -41,11 +41,11 @@ router.get('/viewsignature', function(req, res) {
 
 router.get('/drawsignature', function(req, res) {
   var MongoClient = mongodb.MongoClient;
-  var url = 'mongodb://localhost:27017/sampsite';
+  var url = 'mongodb://monuser:monpass999@ds245150.mlab.com:45150/mondb';
   MongoClient.connect(url,function(err,client){
     if(err){console.log('connection not happening');}
     else{
-    var db = client.db('sampsite');
+    var db = client.db('mondb');
    var collection = db.collection('dots');
    collection.find({}).toArray(function(err,result){
      if(err){}
@@ -70,11 +70,11 @@ else{res.redirect('/');}
 router.post('/addDot', function(req, res) {
 
   var MongoClient = mongodb.MongoClient;
-  var url = 'mongodb://localhost:27017/sampsite';
+  var url = 'mongodb://monuser:monpass999@ds245150.mlab.com:45150/mondb';
   MongoClient.connect(url,function(err,client){
     if(err){console.log('connection not happening');}
     else{
-    var db = client.db('sampsite');
+    var db = client.db('mondb');
     var dot = {lat:req.body.lat, lng:req.body.lng};
     db.listCollections().toArray(function(err, names) {
       if(names.includes("dots"))
