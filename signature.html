@@ -385,7 +385,7 @@
         $.ajax({
                 type : "POST",
                 contentType : "application/json",
-                url : 'http://localhost:8080/addDot',
+                url : 'https://localhost:8080/addDot',
                 data : JSON.stringify(dot),
                 dataType : 'json',
                 success : function(dot) {
@@ -508,7 +508,7 @@ function ajaxGetSignature()
 {
   $.ajax({
 			type : "GET",
-			url : 'http://localhost:8080/drawsignature',
+			url : 'https://localhost:8080/drawsignature',
 			success: function(result){
         $.each(result, function(i, dot){
           var marker = new google.maps.Marker({
