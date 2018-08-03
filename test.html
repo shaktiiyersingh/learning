@@ -19,7 +19,7 @@
     function ajaxGet(){
 		$.ajax({
 			type : "GET",
-			url : 'http://localhost:8080/thelist',
+			url : 'http://localhost:8080 /thelist',
 			success: function(result){
 				$('#getResultDiv ul').empty();
 				var stulist = "";
@@ -46,7 +46,7 @@
                     $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : 'http://localhost:8080/addstudent',
+			url : 'http://localhost:8080 /addstudent',
 			data : JSON.stringify(formdata),
 			dataType : 'json',
 			success : function(student) {
