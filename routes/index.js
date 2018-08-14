@@ -1,11 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var mongodb = require('mongodb');
+var passport = require('passport');
 var fs = require('fs');
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('checklogin');
- // res.sendfile('signature.html');
+  
+ res.sendfile('login.html');
+        
+ //res.render('checklogin');
+ 
+ //res.sendfile('signature.html');
 });
 router.get('/thelist',function(req,res){
   var MongoClient = mongodb.MongoClient;
@@ -40,6 +45,8 @@ router.get('/viewsignature', function(req, res) {
 });
 
 router.get('/drawsignature', function(req, res) {
+ console.log(req.query.userid);
+  var userid = req.query.userid;
   var MongoClient = mongodb.MongoClient;
   var url = 'mongodb://monuser:monpass999@ds245150.mlab.com:45150/mondb';
   MongoClient.connect(url,function(err,client){
@@ -47,7 +54,7 @@ router.get('/drawsignature', function(req, res) {
     else{
     var db = client.db('mondb');
    var collection = db.collection('dots');
-   collection.find({}).toArray(function(err,result){
+   collection.find({},{ userID: userid }).toArray(function(err,result){
      if(err){}
      else {
       return res.send(result);
@@ -62,6 +69,7 @@ router.get('/drawsignature', function(req, res) {
 
 router.post('/checklogin', function(req, res) {
 
+ 
 if(req.body.uname === "yo" && req.body.password === "yo"  ){res.redirect('/viewsignature');}
 else{res.redirect('/');}
   

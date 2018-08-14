@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <title>Rotating 45� imagery</title>
  
-   
-   
+    <script>
+       
+      </script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -121,11 +123,13 @@
         padding-left: 10px;
       }
     </style>
-     <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAjirnCRdDAv6i7w-88vCKVXA6D5CK4rsk&callback=initMap"
+      
+     <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDasuJpMHEdOtpJSlMXDKM0hCjNCIqOnDI&callback=initMap"
      type="text/javascript"></script>
   </head>
   <body>
-      
+   
+
     <div id="map" style='float:left;'></div>
     <div class="pac-card" id="pac-card">
       <div>
@@ -251,7 +255,7 @@
 			});
 			*/
       }
-
+     
       function deleteNearByMarkers(){
         for (var i = 0; i < nearbyMarkers.length; i++) {
           nearbyMarkers[i].setMap(null);
@@ -319,7 +323,11 @@
 
 
       function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
+  
+    //if(response.status === 'connected'){console.log('connected');}
+       
+
+    map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 25.960281, lng: 91.853323}, 
           zoom: 4,
           mapTypeId: google.maps.MapTypeId.HYBRID,
@@ -333,9 +341,9 @@
         var strictBounds = document.getElementById('strict-bounds-selector');
 
         map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+     
         
-        ajaxGetSignature();
-        //alert(markers.length);
+            //alert(markers.length);
       //showLine(markers);
         
         var autocomplete = new google.maps.places.Autocomplete(input);
@@ -372,6 +380,51 @@
         });
 
         //buildDays();
+        var userid;
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId      : '1844649825572339',
+            cookie     : true,
+            xfbml      : true,
+            version    : 'v3.1'
+          });
+            console.log('initialized');
+            var token;
+          
+  
+          FB.AppEvents.logPageView();   
+          FB.login(function(response) {
+            
+      if (response.authResponse) {
+
+        console.log('You are logged in &amp; cookie set!'); 
+         //console.log(response.authResponse.access_token);
+         token = response.authResponse.accessToken;
+        // console.log(token);
+         FB.api('/me', {fields: 'first_name,last_name,email'}, function(response) {
+           userid = response.id;
+    console.log(userid);
+    ajaxGetSignature(userid);
+},{access_token:token});
+      } 
+      else {
+        console.log('User cancelled login or did not fully authorize.');
+      }
+    });
+
+
+
+        };
+      
+        (function(d, s, id){
+           var js, fjs = d.getElementsByTagName(s)[0];
+           if (d.getElementById(id)) {return;}
+           js = d.createElement(s); js.id = id;
+           js.src = "https://connect.facebook.net/en_US/sdk.js";
+           fjs.parentNode.insertBefore(js, fjs);
+         }(document, 'script', 'facebook-jssdk'));
+         
+       
       }
 
       function PlaceMarker2(location){
@@ -506,11 +559,15 @@
         }
       }
 
-function ajaxGetSignature()
+function ajaxGetSignature(userid)
 {
+  console.log('/drawsignature?userid='+userid);
   $.ajax({
 			type : "GET",
-			url : '/drawsignature',
+      url : '/drawsignature',
+      data: { 
+    userid: userid
+  },
 			success: function(result){
         $.each(result, function(i, dot){
           var marker = new google.maps.Marker({
