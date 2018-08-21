@@ -6,10 +6,8 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <title>Rotating 45� imagery</title>
- 
-    <script>
-       
-      </script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas2image@1.0.5/canvas2image.min.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -131,6 +129,8 @@
    
 
     <div id="map" style='float:left;'></div>
+    
+ 
     <div class="pac-card" id="pac-card">
       <div>
         <div id="title">
@@ -161,6 +161,8 @@
       </div>
     </div>
     <div id="postResultDiv">
+        <img id="imgMap" alt="" style="display: none" />
+        
       </div>
         <br>
 
@@ -391,7 +393,10 @@
             console.log('initialized');
             var token;
           
-  
+            
+
+
+
           FB.AppEvents.logPageView();   
           FB.login(function(response) {
             
@@ -405,6 +410,7 @@
            userid = response.id;
     console.log(userid);
     ajaxGetSignature(userid);
+   
 },{access_token:token});
       } 
       else {
@@ -576,20 +582,54 @@ function ajaxGetSignature(userid)
           animation: google.maps.Animation.DROP,
           
         });
+   
+     
         marker.setVisible(true);
         markers.push(marker);
         //
 				//	$('#getResultDiv .list-group').append(student.student + " " + student.age + "<br>")
         });
        showLine(markers);
+      // var canvas = document.createElement("canvas");
+       //document.body.appendChild(canvas);
+     var div = $("#map")[0];
+     var mapcanvas;
+     
+     html2canvas(div).then(canvas => {
+       mapcanvas = canvas;
+       
+    document.body.appendChild(canvas)
+});
+console.log(mapcanvas);
+
+
+
+
+        
+        
+
+
+
+
+       FB.ui({method: 'feed',
+picture: 'http://www.johnlennon.com/wp-content/uploads/2018/02/Walls_Bridges_1974_Gruen_JohnLennon-home-slider-min.jpg',
+link: "http://www.johnlennon.com/",
+caption: "www.gstatic.com",
+description: "a small description associated with your post",
+},  function(response) {
+  if (response && response.post_id) {
+  console.log('Post was published.');
+  } else {
+  console.log('Post was not published.');
+  }
+  });
 			},
 			error : function(e) {
 			
 				console.log("ERROR: ", e);
 			}
 		});
-
-}
+ }
       function placeMarker(lat, lng,head, text,img) {
         //deleteMarkers();
         var location = new google.maps.LatLng(lat,lng);
