@@ -6,12 +6,12 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <title>Rotating 45� imagery</title>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas2image@1.0.5/canvas2image.min.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        
     <style>
       /* Always set the map height explicitly to define the size of the div
       * element that contains the map. */
@@ -130,7 +130,7 @@
 
     <div id="map" style='float:left;'></div>
     
- 
+
     <div class="pac-card" id="pac-card">
       <div>
         <div id="title">
@@ -592,15 +592,11 @@ function ajaxGetSignature(userid)
        showLine(markers);
       // var canvas = document.createElement("canvas");
        //document.body.appendChild(canvas);
-     var div = $("#map")[0];
-     var mapcanvas;
-     
-     html2canvas(div).then(canvas => {
-       mapcanvas = canvas;
+    
+    
        
-    document.body.appendChild(canvas)
-});
-console.log(mapcanvas);
+        
+   
 
 
 
