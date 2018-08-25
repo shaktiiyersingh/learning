@@ -43,6 +43,9 @@ router.get('/newstudent', function(req, res) {
 router.get('/viewsignature', function(req, res) {
   res.sendfile('signature.html');
 });
+router.get('/viewimage', function(req, res) {
+  res.sendfile('itinerarymap.png');
+});
 
 router.get('/drawsignature', function(req, res) {
  console.log(req.query.userid);

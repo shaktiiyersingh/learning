@@ -10,6 +10,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://github.com/niklasvh/html2canvas/releases/download/0.4.1/html2canvas.js"></script>
 
         
     <style>
@@ -122,7 +123,7 @@
       }
     </style>
       
-     <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDasuJpMHEdOtpJSlMXDKM0hCjNCIqOnDI&callback=initMap"
+     <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCAt7tEIMKtzmSfjRYNY_M-0-8w1Ig8CuM&callback=initMap"
      type="text/javascript"></script>
   </head>
   <body>
@@ -134,7 +135,7 @@
     <div class="pac-card" id="pac-card">
       <div>
         <div id="title">
-          My favorite travel experiences
+          Add your memorable travel destinations and create your travel signature
         </div>
         <div id="type-selector" class="pac-controls">
           <input type="radio" name="type" id="changetype-all" checked="checked">
@@ -158,10 +159,11 @@
       <div id="pac-container">
         <input id="pac-input" type="text"
                placeholder="Enter a location">
+               <input id = "fbpost" type = "submit" value = "post to fb"/>
       </div>
     </div>
     <div id="postResultDiv">
-        <img id="imgMap" alt="" style="display: none" />
+       
         
       </div>
         <br>
@@ -258,6 +260,103 @@
 			*/
       }
      
+      $("#fbpost").click(function(){
+    console.log("token "+ token);
+    html2canvas($("#map"), {
+          useCORS: true,
+          optimized: false,
+           allowTaint: false,
+            onrendered: function(canvas) {
+           //theCanvas = canvas;
+              //  document.body.appendChild(canvas);
+              //  $('body').append($('<img>').attr('src', canvas.toDataURL()));
+              var win = window.open();
+              win.document.write("<img src='"+canvas.toDataURL()+"'/>");
+              var data = canvas.toDataURL("image/png");
+              try {
+             blob = dataURItoBlob(data);
+             console.log(blob);
+                 } catch (e) {
+            console.log(e);
+                   }
+
+                   let formData = new FormData();
+ 
+           postImageToFacebook(token, "Canvas to Facebook", "image/png", blob, window.location.href);    
+             // console.log(canvas);
+          
+            }
+          });
+
+});
+
+function postImageToFacebook(token, filename, mimeType, imageData, message) {
+
+
+            
+    var fd = new FormData();
+    fd.append("access_token", token);
+    fd.append("source", imageData);
+    fd.append("message", "yo");
+    fd.append("no_story", true);
+    
+    FB.ui({
+  method: 'share',
+  href: "https://photos.google.com/photo/AF1QipPTXni2TsqTNTrfVuI48CxTT3tfzkEN38RyqekN",
+}, function(response){});
+    /*
+     FB.api('/me/photos', 'post', fd, function(response)
+        {
+            if (!response || response.error)
+            {
+                console.log(response.error);
+                //alert('Posting error occured');
+            }else{
+                console.log('Success - Post ID: ' + response.id);
+            }
+        });
+*/
+   /*
+    try {
+   console.log("https://graph.facebook.com/me/photos?access_token=" + token);
+        $.ajax({ 
+            // "https://graph.facebook.com/me?fields=photos&access_token="+token,
+          //url: "https://graph.facebook.com/v2.11/me/photos?accesstoken="+token,
+        url: "https://graph.facebook.com/me/photos?access_token=" + token,
+         
+         
+        
+            type:"POST",
+            data:fd,
+            processData:false,
+            contentType:false,
+            cache:false,
+            success:function(data){
+                console.log("success " + data);
+
+                    //console.log(response.images[0].source););
+            },
+            error:function(shr,status,data){
+                console.log("error " + data + " Status " + shr.status);
+            },
+           
+        });
+    }
+    catch(e) {
+        console.log(e);
+    }
+    */
+    // 
+}
+function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], {type: 'image/png'});
+}
       function deleteNearByMarkers(){
         for (var i = 0; i < nearbyMarkers.length; i++) {
           nearbyMarkers[i].setMap(null);
@@ -323,7 +422,8 @@
         //alert(days[0]["items"]);
       }
 
-
+ var token;
+ var userid;
       function initMap() {
   
     //if(response.status === 'connected'){console.log('connected');}
@@ -382,7 +482,7 @@
         });
 
         //buildDays();
-        var userid;
+        
         window.fbAsyncInit = function() {
           FB.init({
             appId      : '1844649825572339',
@@ -390,8 +490,8 @@
             xfbml      : true,
             version    : 'v3.1'
           });
-            console.log('initialized');
-            var token;
+           // console.log('initialized');
+           
           
             
 
@@ -405,7 +505,7 @@
         console.log('You are logged in &amp; cookie set!'); 
          //console.log(response.authResponse.access_token);
          token = response.authResponse.accessToken;
-        // console.log(token);
+        
          FB.api('/me', {fields: 'first_name,last_name,email'}, function(response) {
            userid = response.id;
     console.log(userid);
@@ -416,7 +516,7 @@
       else {
         console.log('User cancelled login or did not fully authorize.');
       }
-    });
+    },{scope: "user_photos, manage_pages,publish_pages"});
 
 
 
@@ -595,6 +695,7 @@ function ajaxGetSignature(userid)
     
     
        
+        //var div = $("#map")[0];
         
    
 
@@ -605,7 +706,7 @@ function ajaxGetSignature(userid)
         
 
 
-
+/*
 
        FB.ui({method: 'feed',
 picture: 'http://www.johnlennon.com/wp-content/uploads/2018/02/Walls_Bridges_1974_Gruen_JohnLennon-home-slider-min.jpg',
@@ -619,13 +720,16 @@ description: "a small description associated with your post",
   console.log('Post was not published.');
   }
   });
+  */
 			},
 			error : function(e) {
 			
 				console.log("ERROR: ", e);
 			}
-		});
+    });
+    
  }
+ 
       function placeMarker(lat, lng,head, text,img) {
         //deleteMarkers();
         var location = new google.maps.LatLng(lat,lng);
