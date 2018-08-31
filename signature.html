@@ -3,7 +3,14 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
+    <meta charset="utf-8"><meta property="fb:app_id"          content="1234567890" /> 
+    <meta property="og:type"            content="article" /> 
+    <meta property="og:url"             content="https://chilly-seahorse-31.localtunnel.me/viewsignature" /> 
+    <meta property="og:title"           content="Introducing our New Site" /> 
+     
+           <meta property="og:image"           content="https://chilly-seahorse-31.localtunnel.me/mytravelsignature.png" /> 
+    <meta property="og:description"    content="" />
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <title>Rotating 45� imagery</title>
 
@@ -262,6 +269,7 @@
      
       $("#fbpost").click(function(){
     console.log("token "+ token);
+    console.log("user" + userId);
     html2canvas($("#map"), {
           useCORS: true,
           optimized: false,
@@ -275,12 +283,13 @@
               var data = canvas.toDataURL("image/png");
               try {
              blob = dataURItoBlob(data);
-             console.log(blob);
+             console.log(data);
+             saveSignatureImage(userId,data);
                  } catch (e) {
             console.log(e);
                    }
 
-                   let formData = new FormData();
+                
  
            postImageToFacebook(token, "Canvas to Facebook", "image/png", blob, window.location.href);    
              // console.log(canvas);
@@ -292,18 +301,34 @@
 
 function postImageToFacebook(token, filename, mimeType, imageData, message) {
 
-
             
     var fd = new FormData();
     fd.append("access_token", token);
     fd.append("source", imageData);
     fd.append("message", "yo");
     fd.append("no_story", true);
-    
+    /*
     FB.ui({
   method: 'share',
-  href: "https://photos.google.com/photo/AF1QipPTXni2TsqTNTrfVuI48CxTT3tfzkEN38RyqekN",
+  href: 'https://nervous-quail-57.localtunnel.me/itinerarymap.png',
 }, function(response){});
+*/
+
+FB.ui({
+    method: 'share_open_graph',
+    action_type: 'og.shares',
+    action_properties: JSON.stringify({
+        object : {
+           'og:url': 'https://chilly-seahorse-31.localtunnel.me/viewsignature',
+           'og:title': 'travel signature',
+           'og:description': 'memorable travels you remembered and marked in 30 seconds',
+           'og:image:width': '5000',
+           'og:image:height': '2000',
+           'og:image': 'https://chilly-seahorse-31.localtunnel.me/mytravelsignature.png',
+        }
+    })
+});
+    
     /*
      FB.api('/me/photos', 'post', fd, function(response)
         {
@@ -423,11 +448,48 @@ function dataURItoBlob(dataURI) {
       }
 
  var token;
- var userid;
+ var userId;
+ 
       function initMap() {
   
     //if(response.status === 'connected'){console.log('connected');}
-       
+    var styles = {
+        default: null,
+        hide: [
+          {
+            featureType: 'administrative.country',
+            elementType:'labels',
+            stylers: [{visibility: 'off'}]
+          },
+          {
+            featureType: 'administrative.land_parcel',
+            elementType:'labels',
+            stylers: [{visibility: 'off'}]
+          },
+          {
+            featureType: 'administrative.locality',
+            elementType:'labels',
+            stylers: [{visibility: 'off'}]
+          },
+          {
+            featureType: 'administrative.neighborhood',
+            elementType:'labels',
+            stylers: [{visibility: 'off'}]
+          },
+          {
+            featureType: 'administrative.province',
+            elementType:'labels',
+            stylers: [{visibility: 'off'}]
+          }
+        
+        ]
+      };
+   
+  
+        
+    
+  
+ 
 
     map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 25.960281, lng: 91.853323}, 
@@ -435,15 +497,17 @@ function dataURItoBlob(dataURI) {
           mapTypeId: google.maps.MapTypeId.HYBRID,
           heading: 90,
           tilt: 45
+         
         });
-
+        map.setOptions({styles: styles["hide"]});
+//console.log(map.styles);
         var card = document.getElementById('pac-card');
         var input = document.getElementById('pac-input');
         var types = document.getElementById('type-selector');
         var strictBounds = document.getElementById('strict-bounds-selector');
 
         map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
-     
+
         
             //alert(markers.length);
       //showLine(markers);
@@ -478,7 +542,7 @@ function dataURItoBlob(dataURI) {
             //map.setCenter(place.geometry.location);
             //map.setZoom(9);  
           }
-          PlaceMarker2(place.geometry.location);
+          PlaceMarker2(place.geometry.location, place.name);
         });
 
         //buildDays();
@@ -507,9 +571,9 @@ function dataURItoBlob(dataURI) {
          token = response.authResponse.accessToken;
         
          FB.api('/me', {fields: 'first_name,last_name,email'}, function(response) {
-           userid = response.id;
-    console.log(userid);
-    ajaxGetSignature(userid);
+           userId = response.id;
+    console.log(userId);
+    ajaxGetSignature(userId);
    
 },{access_token:token});
       } 
@@ -517,6 +581,7 @@ function dataURItoBlob(dataURI) {
         console.log('User cancelled login or did not fully authorize.');
       }
     },{scope: "user_photos, manage_pages,publish_pages"});
+
 
 
 
@@ -532,12 +597,36 @@ function dataURItoBlob(dataURI) {
          
        
       }
+function saveSignatureImage(userId, image)
+{
+ 
+ 
+ var signatureImage = {"userId": userId,"image":image};
+ 
+ $.ajax({
+                type : "POST",
+                contentType : "application/json",
+                url : '/addSignatureImage',
+                data : JSON.stringify(signatureImage),
+                dataType : 'json',
+                success : function(signatureImage) {
+                          
+                       console.log(signatureImage.image);
+                              
+                },
+                error : function(e) {
+                 
+                  console.log("ERROR: ", e);
+                }
+              });
 
-      function PlaceMarker2(location){
-        console.log(location);
+
+}
+      function PlaceMarker2(location,name){
+        console.log(location + name);
         console.log(location.lat());
         console.log(location.lng());
-        var dot = {"lat": location.lat(),"lng":location.lng()};
+        var dot = {"lat": location.lat(),"lng":location.lng(),"name":name};
         //get the statename
         var lat = "43.7667855" ;
         var long = "-79.2157321" ;
@@ -555,9 +644,11 @@ function dataURItoBlob(dataURI) {
                     "Post Successfully! <br>" +
                               "--->" + JSON.stringify(dot)+ "</p>"); 
                               
+                              
                 },
                 error : function(e) {
                   alert(e)
+
                   console.log("ERROR: ", e);
                 }
               });
@@ -594,11 +685,18 @@ function dataURItoBlob(dataURI) {
 */
 
         ///////////////////////
+      
+
         var marker = new google.maps.Marker({
           position: location,
+          label:
+          {text: name,
+          color: "#FFFFFF"},
           map: map,
           animation: google.maps.Animation.DROP,
+    
         });
+       
         /*
         google.maps.event.addListener(marker,'click',function() {
           var this_id=marker.get("id");
@@ -615,10 +713,13 @@ function dataURItoBlob(dataURI) {
         });
       */
         //marker.setPosition(place.geometry.location);
+        
+        
         marker.setVisible(true);
         
         marker.set("id",++marker_id);
         markers.push(marker);
+        
        //alert(markers.length);
        //showLine(markers);
        // map.setCenter(markers[marker_id].getPosition());
@@ -637,10 +738,28 @@ function dataURItoBlob(dataURI) {
           //alert(JSON.stringify(markers[i].position));
       var obj = JSON.parse(JSON.stringify(markers[i].position));
       var loc = new google.maps.LatLng(obj.lat, obj.lng);
-
+      /*
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode({'location': loc}, function(results, status) {
+          if (status === 'OK') {
+            if (results[0]) {
+              map.setZoom(11);
+            
+              console.log(results[0].formatted_address);
+              
+            } else {
+              console.log('No results found');
+            }
+          } else {
+            console.log('Geocoder failed due to: ' + status);
+          }
+        });
+        */
 //alert(obj.lat);
 
     coords.push(loc);
+    
+    //console.log(geocoder);
         
         // alert(pos);
         }
@@ -665,19 +784,23 @@ function dataURItoBlob(dataURI) {
         }
       }
 
-function ajaxGetSignature(userid)
+function ajaxGetSignature(userId)
 {
-  console.log('/drawsignature?userid='+userid);
+  console.log('/drawsignature?userId='+userId);
   $.ajax({
 			type : "GET",
       url : '/drawsignature',
       data: { 
-    userid: userid
+    userId: userId
   },
 			success: function(result){
         $.each(result, function(i, dot){
+         // console.log(dot.name);
           var marker = new google.maps.Marker({
           position: dot,
+          label:
+          {text: dot.name,
+          color: "#FFFFFF"},
           map: map,
           animation: google.maps.Animation.DROP,
           
@@ -686,6 +809,7 @@ function ajaxGetSignature(userid)
      
         marker.setVisible(true);
         markers.push(marker);
+        
         //
 				//	$('#getResultDiv .list-group').append(student.student + " " + student.age + "<br>")
         });
