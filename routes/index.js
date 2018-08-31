@@ -112,7 +112,7 @@ var userId = req.body.userId;
   
  var image = decodeBase64Image(req.body.image);
  
-  fs.writeFile("../sampsite/data/images/mytravelsignature.png", image.data, function(err) {
+  fs.writeFile("./data/images/mytravelsignature.png", image.data, function(err) {
     console.log(err);
   });
   
