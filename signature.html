@@ -307,13 +307,13 @@ function postImageToFacebook(token, filename, mimeType, imageData, message) {
     fd.append("source", imageData);
     fd.append("message", "yo");
     fd.append("no_story", true);
-    /*
+    
     FB.ui({
   method: 'share',
-  href: 'https://nervous-quail-57.localtunnel.me/itinerarymap.png',
+  href: 'https://yosig.herokuapp.com/mytravelsignature.png?fbrefresh=CAN_BE_ANYTHING',
 }, function(response){});
-*/
 
+/*
 FB.ui({
     method: 'share_open_graph',
     action_type: 'og.shares',
@@ -328,7 +328,7 @@ FB.ui({
         }
     })
 });
-    
+  */  
     /*
      FB.api('/me/photos', 'post', fd, function(response)
         {
