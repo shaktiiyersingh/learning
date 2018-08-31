@@ -5,10 +5,10 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8"><meta property="fb:app_id"          content="1234567890" /> 
     <meta property="og:type"            content="article" /> 
-    <meta property="og:url"             content="https://yosig.herokuapp.com/viewsignature" /> 
+    <meta property="og:url"             content="https://yosig.herokuapp.com/viewsignature?fbrefresh=CAN_BE_ANYTHING" /> 
     <meta property="og:title"           content="Introducing our New Site" /> 
      
-           <meta property="og:image"           content="https://yosig.herokuapp.com/mytravelsignature.png" /> 
+           <meta property="og:image"           content="https://yosig.herokuapp.com/mytravelsignature.png?fbrefresh=CAN_BE_ANYTHING" /> 
     <meta property="og:description"    content="" />
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -308,27 +308,28 @@ function postImageToFacebook(token, filename, mimeType, imageData, message) {
     fd.append("message", "yo");
     fd.append("no_story", true);
     
+    /*
     FB.ui({
   method: 'share',
   href: 'https://yosig.herokuapp.com/mytravelsignature.png?fbrefresh=CAN_BE_ANYTHING',
 }, function(response){});
+*/
 
-/*
 FB.ui({
     method: 'share_open_graph',
     action_type: 'og.shares',
     action_properties: JSON.stringify({
         object : {
-           'og:url': 'https://yosig.herokuapp.com/viewsignature',
+           'og:url': 'https://yosig.herokuapp.com/viewsignature?fbrefresh=CAN_BE_ANYTHING',
            'og:title': 'travel signature',
            'og:description': 'memorable travels you remembered and marked in 30 seconds',
            'og:image:width': '5000',
            'og:image:height': '2000',
-           'og:image': 'https://yosig.herokuapp.com/mytravelsignature.png',
+           'og:image': 'https://yosig.herokuapp.com/mytravelsignature.png?fbrefresh=CAN_BE_ANYTHING',
         }
     })
 });
-  */  
+   
     /*
      FB.api('/me/photos', 'post', fd, function(response)
         {
