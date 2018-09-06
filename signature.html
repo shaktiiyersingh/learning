@@ -268,8 +268,10 @@
       }
      
       $("#fbpost").click(function(){
+        var imgname;
     console.log("token "+ token);
     console.log("user" + userId);
+  
     html2canvas($("#map"), {
           useCORS: true,
           optimized: false,
@@ -284,14 +286,15 @@
               try {
              blob = dataURItoBlob(data);
              console.log(data);
-             saveSignatureImage(userId,data);
+               saveSignatureImage(userId,data);
+              //console.log(imgname);
                  } catch (e) {
             console.log(e);
                    }
 
                 
  
-           postImageToFacebook(token, "Canvas to Facebook", "image/png", blob, window.location.href);    
+              
              // console.log(canvas);
           
             }
@@ -299,21 +302,23 @@
 
 });
 
-function postImageToFacebook(token, filename, mimeType, imageData, message) {
+function postImageToFacebook( imgname,token, filename, mimeType, imageData, message) {
 
-            
+      console.log("https://yosig.herokuapp.com/" + imgname);
     var fd = new FormData();
     fd.append("access_token", token);
     fd.append("source", imageData);
     fd.append("message", "yo");
     fd.append("no_story", true);
+   
     
-  /*  
     FB.ui({
   method: 'share',
-  href: 'https://yosig.herokuapp.com/mytravelsignature.png?fbrefresh=CAN_BE_ANYTHING',
+  href: "https://yosig.herokuapp.com/" + imgname,
 }, function(response){});
-*/
+
+
+//$.post("https://graph.facebook.com?id='https://yosig.herokuapp.com/mytravelsignature.png'&scrape=true");
 /*
 $.post(
     'https://graph.facebook.com',
@@ -327,9 +332,10 @@ $.post(
 );
 */
 
+/*
 FB.ui({
     method: 'share_open_graph',
-    action_type: 'og.shares',
+    action_type: 'og.likes',
     action_properties: JSON.stringify({
         object : {
            'og:url': 'https://yosig.herokuapp.com/mytravelsignature.png',
@@ -338,10 +344,11 @@ FB.ui({
            
            'og:image': 'https://yosig.herokuapp.com/mytravelsignature.png'
         }
-    })
-   
+    }),
+    scrape:true
+  
 });
-   
+   */
     /*
      FB.api('/me/photos', 'post', fd, function(response)
         {
@@ -462,6 +469,7 @@ function dataURItoBlob(dataURI) {
 
  var token;
  var userId;
+ 
  
       function initMap() {
   
@@ -613,7 +621,7 @@ function dataURItoBlob(dataURI) {
 function saveSignatureImage(userId, image)
 {
  
- 
+ var imgname;
  var signatureImage = {"userId": userId,"image":image};
  
  $.ajax({
@@ -622,9 +630,10 @@ function saveSignatureImage(userId, image)
                 url : '/addSignatureImage',
                 data : JSON.stringify(signatureImage),
                 dataType : 'json',
-                success : function(signatureImage) {
-                          
-                       console.log(signatureImage.image);
+                success : function(result) {
+                          imgname = result.imgname;
+                       //console.log(imgname);
+                       retimgname(imgname);
                               
                 },
                 error : function(e) {
@@ -634,6 +643,13 @@ function saveSignatureImage(userId, image)
               });
 
 
+}
+
+function retimgname(imgname)
+{
+  //console.log(imgname);
+  postImageToFacebook(imgname, token, "Canvas to Facebook", "image/png", blob, window.location.href);
+ 
 }
       function PlaceMarker2(location,name){
         console.log(location + name);

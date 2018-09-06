@@ -10,6 +10,7 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
+    "find": "^0.2.9",
     "html2canvas": "^1.0.0-alpha.12",
     "mongodb": "^3.1.1",
     "mustache": "^2.3.1",

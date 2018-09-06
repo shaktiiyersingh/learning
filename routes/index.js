@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongodb = require('mongodb');
 var passport = require('passport');
+var find = require('find');
 var fs = require('fs');
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -93,8 +94,66 @@ else{res.redirect('/');}
 });
 
 router.post('/addSignatureImage', function(req, res) {
-var userId = req.body.userId;
+
+  var userId = req.body.userId;
+var image = decodeBase64Image(req.body.image);
+var x = 0;
+var imgname;
+imgname = "./data/images/" + x.toString() +"mytravelsignature" + userId + ".png"
+fs.readdir("./data/images/", function(err, items) {
   
+  if (items.length === 1)
+  {
+   
+    console.log(imgname);
+    fs.writeFile(imgname , image.data, function(err) {
+      console.log(err);
+    });
+    return res.send({"userId":userId,"image":image, "imgname":x.toString() +"mytravelsignature" + userId + ".png"});
+  }
+  for (var i=0; i<items.length; i++) {
+   
+      if (items[i].indexOf(userId)!= -1) 
+      {
+        x = parseInt(items[i].substring(0,1));
+        imgname = "./data/images/" + x.toString() +"mytravelsignature" + userId + ".png";
+        fs.unlinkSync(imgname, function (err) {
+          if (err) throw err;
+          // if no error, file has been deleted successfully
+          console.log('File deleted!');
+      });  
+        x = parseInt(items[i].substring(0,1)) + 1;
+        
+        imgname = "./data/images/" + x.toString() +"mytravelsignature" + userId + ".png";
+        
+        console.log(imgname);
+        fs.writeFile(imgname , image.data, function(err) {
+          console.log(err);
+        });
+        return res.send({"userId":userId,"image":image, "imgname":x.toString() +"mytravelsignature" + userId + ".png"});
+        
+      }
+    
+     
+      
+   
+  }
+
+});
+
+
+/*
+fs.stat("./data/images/mytravelsignature.png", function(err, stat) {
+  if(err == null) {
+      console.log('File exists');
+  } else if(err.code == 'ENOENT') {
+      // file does not exist
+      console.log('file doesnt exist');
+  } else {
+      console.log('Some other error: ', err.code);
+  }
+});
+*/
   /*
   var decodedImg = decodeBase64Image(req.body.image);
  var imageBuffer = decodedImg.data;
@@ -110,15 +169,15 @@ var userId = req.body.userId;
  */
   //var Buffer = new Buffer(data, 'base64'); 
   
- var image = decodeBase64Image(req.body.image);
+
+ //console.log(imgname); 
  
-  fs.writeFile("./data/images/mytravelsignature.png", image.data, function(err) {
-    console.log(err);
-  });
+ 
   
   
-  console.log(image);
-  return res.send({"userId":userId,"image":image});
+  
+ // console.log(image);
+  
 });
 
 router.post('/addDot', function(req, res) {
