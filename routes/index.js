@@ -101,7 +101,7 @@ var x = 0;
 var imgname;
 imgname = "./data/images/" + x.toString() +"mytravelsignature" + userId + ".png"
 fs.readdir("./data/images/", function(err, items) {
-  
+  console.log(items.length);
   if (items.length === 1)
   {
    
@@ -117,7 +117,7 @@ fs.readdir("./data/images/", function(err, items) {
       {
         x = parseInt(items[i].substring(0,1));
         imgname = "./data/images/" + x.toString() +"mytravelsignature" + userId + ".png";
-        fs.unlinkSync(imgname, function (err) {
+        fs.unlink(imgname, function (err) {
           if (err) throw err;
           // if no error, file has been deleted successfully
           console.log('File deleted!');
