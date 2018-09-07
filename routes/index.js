@@ -115,14 +115,15 @@ fs.readdir("./data/images/", function(err, items) {
    
       if (items[i].indexOf(userId)!= -1) 
       {
-        x = parseInt(items[i].substring(0,1));
+        x = parseInt(items[i].substring(0,items[i].indexOf("m")));
         imgname = "./data/images/" + x.toString() +"mytravelsignature" + userId + ".png";
+        console.log(imgname);
         fs.unlink(imgname, function (err) {
           if (err) throw err;
           // if no error, file has been deleted successfully
           console.log('File deleted!');
       });  
-        x = parseInt(items[i].substring(0,1)) + 1;
+        x = x + 1;
         
         imgname = "./data/images/" + x.toString() +"mytravelsignature" + userId + ".png";
         
