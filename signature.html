@@ -166,7 +166,8 @@
       <div id="pac-container">
         <input id="pac-input" type="text"
                placeholder="Enter a location">
-               <input id = "fbpost" type = "submit" value = "post to fb"/>
+               <input id = "fbpost" type = "submit" value = "fbpost"/>
+               
       </div>
     </div>
     <div id="postResultDiv">
@@ -267,6 +268,7 @@
 			*/
       }
      
+
       $("#fbpost").click(function(){
         var imgname;
     console.log("token "+ token);
@@ -673,7 +675,7 @@ function retimgname(imgname)
                     "Post Successfully! <br>" +
                               "--->" + JSON.stringify(dot)+ "</p>"); 
                               
-                              
+                           
                 },
                 error : function(e) {
                   alert(e)
@@ -681,7 +683,7 @@ function retimgname(imgname)
                   console.log("ERROR: ", e);
                 }
               });
-
+              ajaxGetSignature(userId);
         /*
 		$.get(url).success(function(data) {
 		   var loc1 = data.results[0];
