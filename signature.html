@@ -130,12 +130,11 @@
       }
     </style>
       
-     <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCAt7tEIMKtzmSfjRYNY_M-0-8w1Ig8CuM&callback=initMap"
-     type="text/javascript"></script>
+   
   </head>
   <body>
    
-
+   
     <div id="map" style='float:left;'></div>
     
 
@@ -176,7 +175,7 @@
                  
                  
         </div>
-<div id = "timer" style = "display:none">Time Remaining</div>
+<div id = "timer" style = "display:none"></div>
         <div id = "rules">
 <span> You get 60 seconds to mark your most memorable travel destinations on the map..</span>
 <br>
@@ -231,37 +230,28 @@
       var last_place_search_type="";
 
        $("#play").click(function(){
+         console.log("play clicked");
         // $("#fbpost").show();
         
         $("#timer").show();
          $("#pac-input").show();
          $("#play").hide();
-         var playStartTime = new Date().getTime();
+       
         
-        
-var x = setInterval(function() {
- 
-var now = new Date().getTime();
-
-var timeRemaining =  now - playStartTime ;
-console.log(timeRemaining + "s");
-
-//$("#timer").html(timeRemaining);
-
-
-
-    if (timeRemaining > 60000) {
-        clearInterval(x);
-        $("#timer").hide();
-        $("#play").show();
-        $("#pac-input").hide();
-        $("#fbpost").show();
+         var count = 60, timer = setInterval(function() {
+    $("#timer").html(count--);
+    if(count < 0) 
+    {
+    clearInterval(timer);
+    
+         $("#timer").hide();
+         $("#pac-input").hide();
+         fbpost();
+         //$("#fbpost").show();
+         
     }
 }, 1000);
-
-
-       });
-
+});
       function SearchPlace(value){
         deleteNearByMarkers();
         if(value==""){
@@ -320,7 +310,13 @@ console.log(timeRemaining + "s");
      
 
       $("#fbpost").click(function(){
-        var imgname;
+        
+fbpost();
+});
+
+function fbpost()
+{
+  var imgname;
     console.log("token "+ token);
     console.log("user" + userId);
   
@@ -351,9 +347,7 @@ console.log(timeRemaining + "s");
           
             }
           });
-
-});
-
+}
 function postImageToFacebook( imgname,token, filename, mimeType, imageData, message) {
 
       console.log("https://yosig.herokuapp.com/" + imgname);
@@ -670,6 +664,8 @@ function dataURItoBlob(dataURI) {
          
        
       }
+
+
 function saveSignatureImage(userId, image)
 {
  
@@ -958,5 +954,7 @@ description: "a small description associated with your post",
       }
 
     </script>
+     <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCAt7tEIMKtzmSfjRYNY_M-0-8w1Ig8CuM&callback=initMap"
+     type="text/javascript"></script>
   </body>
 </html>
