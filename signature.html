@@ -143,56 +143,57 @@
        
         
       </div>
-      <div class="pac-card" id="pac-card">
-        <div>
-          <div id="title">
-            Add your memorable travel destinations and create your travel signature
-          </div>
-          <div id="type-selector" class="pac-controls">
-            <input type="radio" name="type" id="changetype-all" checked="checked">
-            <label for="changetype-all">All</label>
-  
-            <input type="radio" name="type" id="changetype-establishment">
-            <label for="changetype-establishment">Establishments</label>
-            <!--
-  <input type="radio" name="type" id="changetype-address">
-  <label for="changetype-address">Addresses</label>
-  
-  <input type="radio" name="type" id="changetype-geocode">
-  <label for="changetype-geocode">Geocodes</label>
-  -->
-          </div>
-          <div id="strict-bounds-selector" class="pac-controls">
-            <input type="checkbox" id="use-strict-bounds" value="">
-            <label for="use-strict-bounds">Strict Bounds</label>
-          </div>
-        </div>
-        <div id="pac-container">
-          <input id="pac-input" type="text"
-                 placeholder="Enter a location" style = "display:none">
-                 <input id = "fbpost" type = "submit" value = "fbpost" style = "display:none">
-                 <input id = "play" type = "submit" value = "play"/>
-                 
-                 
-        </div>
-<div id = "timer" style = "display:none"></div>
-        <div id = "rules">
-<span> You get 60 seconds to mark your most memorable travel destinations on the map..</span>
-<br>
-<br>
-<span>You can play again if you think you missed out marking some..</span> 
-<br>
-<br>
-<span>When you are satisfied with your signature you can post it to your fb wall and share your signature with your friends</span>
-<br>
-<br>
-  
-        </div>
-      </div>
-        <br>
+              <br>
 
     <div id="summary_box" style='float:left;border:1px solid #aaa; height:18%;width:99%;margin:5px;background:darkkhaki'>
-
+        
+      <div class="pac-card" id="pac-card">
+            <div>
+              <div id="title">
+                Add your memorable travel destinations and create your travel signature
+              </div>
+              <div id="type-selector" class="pac-controls">
+                <input type="radio" name="type" id="changetype-all" checked="checked">
+                <label for="changetype-all">All</label>
+      
+                <input type="radio" name="type" id="changetype-establishment">
+                <label for="changetype-establishment">Establishments</label>
+                <!--
+      <input type="radio" name="type" id="changetype-address">
+      <label for="changetype-address">Addresses</label>
+      
+      <input type="radio" name="type" id="changetype-geocode">
+      <label for="changetype-geocode">Geocodes</label>
+      -->
+              </div>
+              <div id="strict-bounds-selector" class="pac-controls">
+                <input type="checkbox" id="use-strict-bounds" value="">
+                <label for="use-strict-bounds">Strict Bounds</label>
+              </div>
+            </div>
+            <div id="pac-container">
+              <input id="pac-input" type="text"
+                     placeholder="Enter a location" style = "display:none">
+                     <input id = "fbpost" type = "submit" value = "fbpost" style = "display:none">
+                     <input id = "play" type = "submit" value = "play"/>
+                     
+                     
+            </div>
+    <div id = "timer" style = "display:none"></div>
+            <div id = "rules">
+    <span> You get 60 seconds to mark your most memorable travel destinations on the map..</span>
+    <br>
+    <br>
+    <span>You can play again if you think you missed out marking some..</span> 
+    <br>
+    <br>
+    <span>When you are satisfied with your signature you can post it to your fb wall and share your signature with your friends</span>
+    <br>
+    <br>
+      
+            </div>
+          </div>
+    
     </div>
 
     <script>
@@ -245,7 +246,7 @@
     clearInterval(timer);
     
          $("#timer").hide();
-         $("#pac-input").hide();
+         $("#pac-input").show();
          fbpost();
          //$("#fbpost").show();
          
