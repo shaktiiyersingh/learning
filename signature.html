@@ -174,10 +174,10 @@
             <div id="pac-container">
               <input id="pac-input" type="text"
                      placeholder="Enter a location" style = "display:none">
-                     <input id = "fbpost" type = "submit" value = "fbpost">
-                     <input id = "play" type = "submit" value = "play"/>
+                     <input id = "fbpost" type = "submit" value = "Post on FB">
+                     <input id = "play" type = "submit" value = "Play"/>
                      
-                     <input id = "deletePlace" type = "submit" value = "delete"/>
+                     <input id = "deletePlace" type = "submit" value = "Delete Signature" style = "display:none"/>
             </div>
     <div id = "timer" style = "display:none"></div>
             <div id = "rules">
@@ -258,8 +258,8 @@ function deletesignature()
 }
        $("#play").click(function(){
          console.log("play clicked");
-         //deletesignature();
-         //deleteMarkers();
+         deletesignature();
+         deleteMarkers();
        
 
         // $("#fbpost").show();
@@ -270,7 +270,7 @@ function deletesignature()
          $("#fbpost").hide();
        
         
-         var count = 20, timer = setInterval(function() {
+         var count = 60, timer = setInterval(function() {
     $("#timer").html(count--);
     if(count < 0) 
     {
