@@ -48,6 +48,59 @@ router.get('/viewimage', function(req, res) {
   res.sendfile('itinerarymap.png');
 });
 
+router.post('/deletesignature', function(req, res) {
+  var userId = req.query.userId;
+  var MongoClient = mongodb.MongoClient;
+  var url = 'mongodb://monuser:monpass999@ds245150.mlab.com:45150/mondb';
+  MongoClient.connect(url,function(err,client){
+    if(err){console.log('connection not happening');}
+    else{
+    var db = client.db('mondb');
+    db.collection("dots").drop(function(err, delOK) {
+      if (err) 
+      {
+      console.log("no collection found to delete");
+      return res.send("no collection found to delete")
+      }
+      if (delOK) 
+      {
+        console.log("Collection deleted");
+        return res.send("deleted");
+      }
+      
+    });
+    //db.listCollections().toArray(function(err, names) {});
+      //console.log(names);
+
+      /*
+      if(names.includes("dots"))
+      {
+        db.collection("dots").drop(function(err, delOK) {
+          if (err) console.log(err);
+          if (delOK) 
+          {
+            console.log("Collection deleted");
+            return res.send("deleted");
+          }
+          
+        });
+      }
+      else
+      {
+   console.log("collection doesnt exist");
+   return res.send("collection doesnt exist");
+      }
+  */
+     
+ 
+  
+
+   
+  }
+
+  });
+});
+
 router.get('/drawsignature', function(req, res) {
 // console.log(req.query.userId);
   var userId = req.query.userId;
@@ -190,14 +243,21 @@ router.post('/addDot', function(req, res) {
     else{
     var db = client.db('mondb');
     var dot = {lat:req.body.lat, lng:req.body.lng,name:req.body.name};
+    /*
+    db.createCollection("dots",function(err,res){if(err)console.log("collection already exists");});
+        var dots = db.collection('dots');
+        dots.insert([dot],function(err,result){if(err)console.log(err); else {return res.send(dot);}});
+      */  
     db.listCollections().toArray(function(err, names) {
       if(names.includes("dots"))
       {
+        console.log("exists");
         var dots = db.collection('dots');
         dots.insert([dot],function(err,result){if(err)console.log(err); else {return res.send(dot);}});
       }
       else
       {
+        console.log("adding to collection");
         db.createCollection("dots",function(err,res){if(err)console.log(err);});
         var dots = db.collection('dots');
         dots.insert([dot],function(err,result){if(err)console.log(err); else {return res.send(dot);}});
@@ -205,6 +265,7 @@ router.post('/addDot', function(req, res) {
   
      
   });
+  
     
 
     }

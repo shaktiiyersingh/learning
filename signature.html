@@ -141,9 +141,9 @@
 
     <div id="postResultDiv">
        
-        
+       
       </div>
-              <br>
+      
 
     <div id="summary_box" style='float:left;border:1px solid #aaa; height:18%;width:99%;margin:5px;background:darkkhaki'>
         
@@ -174,10 +174,10 @@
             <div id="pac-container">
               <input id="pac-input" type="text"
                      placeholder="Enter a location" style = "display:none">
-                     <input id = "fbpost" type = "submit" value = "fbpost" style = "display:none">
+                     <input id = "fbpost" type = "submit" value = "fbpost">
                      <input id = "play" type = "submit" value = "play"/>
                      
-                     
+                     <input id = "deletePlace" type = "submit" value = "delete"/>
             </div>
     <div id = "timer" style = "display:none"></div>
             <div id = "rules">
@@ -230,25 +230,57 @@
       };
       var last_place_search_type="";
 
+ $("#deletePlace").click(function(){
+  console.log("delete clicked");
+  deletesignature();
+deleteMarkers();
+
+  });
+
+function deletesignature()
+{
+  $.ajax({  
+        url: "/deletesignature",
+        type: 'POST',  
+        data: { 
+    
+
+        },  
+        success: function (res) {  
+            console.log(res);
+        } , 
+        error: function (res) {  
+            alert(res);
+        } 
+    });
+  // initMap();
+    //ajaxGetSignature(userId);
+}
        $("#play").click(function(){
          console.log("play clicked");
+         //deletesignature();
+         //deleteMarkers();
+       
+
         // $("#fbpost").show();
         
         $("#timer").show();
          $("#pac-input").show();
          $("#play").hide();
+         $("#fbpost").hide();
        
         
-         var count = 60, timer = setInterval(function() {
+         var count = 20, timer = setInterval(function() {
     $("#timer").html(count--);
     if(count < 0) 
     {
     clearInterval(timer);
     
          $("#timer").hide();
-         $("#pac-input").show();
+         $("#pac-input").hide();
          $("#play").show();
-         fbpost();
+         $("#fbpost").show();
+         //fbpost();
          //$("#fbpost").show();
          
     }
@@ -597,6 +629,7 @@ function dataURItoBlob(dataURI) {
           //infowindow.close();
           //marker.setVisible(false);
           var place = autocomplete.getPlace();
+          $("#pac-input").val("");
           if (!place.geometry) {
             // User entered the name of a Place that was not suggested and
             // pressed the Enter key, or the Place Details request failed.
@@ -702,6 +735,7 @@ function retimgname(imgname)
  
 }
       function PlaceMarker2(location,name){
+       
         console.log(location + name);
         console.log(location.lat());
         console.log(location.lng());
@@ -718,12 +752,13 @@ function retimgname(imgname)
                 data : JSON.stringify(dot),
                 dataType : 'json',
                 success : function(dot) {
-                          
-                          $("#postResultDiv").html("<p>" + 
+                         /* 
+                          $("#postResultDiv").html("" + "<p>" + 
                     "Post Successfully! <br>" +
                               "--->" + JSON.stringify(dot)+ "</p>"); 
-                              
-                           
+                           */ 
+                              //$('#postResultDiv').append('<input type="checkbox" name=' + JSON.stringify(dot.name) + '/>' + dot.name + '</br>');
+                            //  $("#postResultDiv").append(dot.name);
                 },
                 error : function(e) {
                   alert(e)
@@ -731,7 +766,9 @@ function retimgname(imgname)
                   console.log("ERROR: ", e);
                 }
               });
-              ajaxGetSignature(userId);
+              //initMap();
+         //     deleteMarkers();
+             // ajaxGetSignature(userId);
         /*
 		$.get(url).success(function(data) {
 		   var loc1 = data.results[0];
@@ -777,6 +814,13 @@ function retimgname(imgname)
 
         });
        
+        marker.setVisible(true);
+        
+        marker.set("id",++marker_id);
+        markers.push(marker);
+        // deleteMarkers();
+        showLine(markers);
+        
         /*
         google.maps.event.addListener(marker,'click',function() {
           var this_id=marker.get("id");
@@ -795,11 +839,7 @@ function retimgname(imgname)
         //marker.setPosition(place.geometry.location);
         
         
-        marker.setVisible(true);
-        
-        marker.set("id",++marker_id);
-        markers.push(marker);
-        
+       
        //alert(markers.length);
        //showLine(markers);
        // map.setCenter(markers[marker_id].getPosition());
@@ -811,8 +851,17 @@ function retimgname(imgname)
       function buildDays(){
       }
 
+var signatureline;
+var lineDrawn = 0;
       function showLine(markers)
       {
+        if(lineDrawn>0)
+        {
+          console.log(lineDrawn);
+          signatureline.setMap(null);
+        }
+        lineDrawn = lineDrawn + 1; 
+        //signatureline.setMap(null);
        var coords = []; 
         for (var i = 0; i < markers.length; i++) {
           //alert(JSON.stringify(markers[i].position));
@@ -846,7 +895,7 @@ function retimgname(imgname)
     
         
         
-        var signatureline = new google.maps.Polyline({
+        signatureline = new google.maps.Polyline({
         path: coords,
           geodesic: true,
         strokeColor: "#FF00FF",
@@ -859,14 +908,21 @@ function retimgname(imgname)
       }
 
       function deleteMarkers(){
+       // console.log(markers.length);
         for (var i = 0; i < markers.length; i++) {
           markers[i].setMap(null);
+         
         }
+      
+     markers = [];
+       console.log(markers.length);
+       signatureline.setMap(null);
       }
 
 function ajaxGetSignature(userId)
 {
   console.log('/drawsignature?userId='+userId);
+  $('#postResultDiv').html("");
   $.ajax({
 			type : "GET",
       url : '/drawsignature',
@@ -874,6 +930,8 @@ function ajaxGetSignature(userId)
     userId: userId
   },
 			success: function(result){
+       
+   
         $.each(result, function(i, dot){
          // console.log(dot.name);
           var marker = new google.maps.Marker({
@@ -886,11 +944,11 @@ function ajaxGetSignature(userId)
           icon: {url:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png", scaledSize: new google.maps.Size(10, 10)},
 
         });
+       // $('#postResultDiv').append('<input type="checkbox" name=' + JSON.stringify(dot.name) + '/>' + dot.name + '</br>');   
    
-     
         marker.setVisible(true);
         markers.push(marker);
-        
+    
         //
 				//	$('#getResultDiv .list-group').append(student.student + " " + student.age + "<br>")
         });
