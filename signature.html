@@ -175,7 +175,8 @@
               <input id="pac-input" type="text"
                      placeholder="Enter a location" style = "display:none">
                      <input id = "fbpost" type = "submit" value = "Post on FB">
-                     <input id = "play" type = "submit" value = "Play"/>
+                     <input id = "play" type = "submit" value = "Play" style = "display:none"/>
+                     <input id = "login" type = "submit" value = "FB-Login"/>
                      
                      <input id = "deletePlace" type = "submit" value = "Delete Signature" style = "display:none"/>
             </div>
@@ -237,6 +238,60 @@ deleteMarkers();
 
   });
 
+ $("#login").click(function(){
+  console.log("login clicked");
+  window.fbAsyncInit = function() {
+          FB.init({
+            appId      : '1844649825572339',
+            cookie     : true,
+            xfbml      : true,
+            version    : 'v3.1'
+          });
+           // console.log('initialized');
+           
+          
+            
+
+
+
+          FB.AppEvents.logPageView();   
+          FB.login(function(response) {
+            
+      if (response.authResponse) {
+
+        console.log('You are logged in &amp; cookie set!'); 
+         //console.log(response.authResponse.access_token);
+         token = response.authResponse.accessToken;
+        
+         FB.api('/me', {fields: 'first_name,last_name,email'}, function(response) {
+           userId = response.id;
+    console.log(userId);
+    ajaxGetSignature(userId);
+   
+},{access_token:token});
+      } 
+      else {
+        console.log('User cancelled login or did not fully authorize.');
+      }
+    },{scope: "user_photos, manage_pages,publish_pages"});
+
+
+
+
+        };
+      
+        (function(d, s, id){
+           var js, fjs = d.getElementsByTagName(s)[0];
+           if (d.getElementById(id)) {return;}
+           js = d.createElement(s); js.id = id;
+           js.src = "https://connect.facebook.net/en_US/sdk.js";
+           fjs.parentNode.insertBefore(js, fjs);
+         }(document, 'script', 'facebook-jssdk'));
+        
+$("#play").show();
+$("#login").hide();
+  });
+
 function deletesignature()
 {
   $.ajax({  
@@ -258,6 +313,7 @@ function deletesignature()
 }
        $("#play").click(function(){
          console.log("play clicked");
+         
          deletesignature();
          deleteMarkers();
        
@@ -648,7 +704,7 @@ function dataURItoBlob(dataURI) {
         });
 
         //buildDays();
-        
+  /*      
         window.fbAsyncInit = function() {
           FB.init({
             appId      : '1844649825572339',
@@ -697,7 +753,7 @@ function dataURItoBlob(dataURI) {
            fjs.parentNode.insertBefore(js, fjs);
          }(document, 'script', 'facebook-jssdk'));
          
-       
+*/       
       }
 
 
