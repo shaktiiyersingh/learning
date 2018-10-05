@@ -24,8 +24,8 @@
       /* Always set the map height explicitly to define the size of the div
       * element that contains the map. */
       #map {
-        height: 80%;
-        width:80%;
+        height: 75%;
+        width:100%;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
@@ -139,7 +139,7 @@
     
 
 
-    <div id="postResultDiv">
+    <div id="postResultDiv" style = "display:none">
        
        
       </div>
@@ -152,24 +152,29 @@
               <div id="title">
                 Add your memorable travel destinations and create your travel signature
               </div>
+              <!--
               <div id="type-selector" class="pac-controls">
+                
                 <input type="radio" name="type" id="changetype-all" checked="checked">
                 <label for="changetype-all">All</label>
       
                 <input type="radio" name="type" id="changetype-establishment">
                 <label for="changetype-establishment">Establishments</label>
-                <!--
+              
       <input type="radio" name="type" id="changetype-address">
       <label for="changetype-address">Addresses</label>
       
       <input type="radio" name="type" id="changetype-geocode">
       <label for="changetype-geocode">Geocodes</label>
-      -->
               </div>
+
+      
+          
               <div id="strict-bounds-selector" class="pac-controls">
                 <input type="checkbox" id="use-strict-bounds" value="">
                 <label for="use-strict-bounds">Strict Bounds</label>
               </div>
+              -->
             </div>
             <div id="pac-container">
               <input id="pac-input" type="text"
@@ -239,24 +244,11 @@ deleteMarkers();
   });
 
  $("#login").click(function(){
-  console.log("login clicked");
-  window.fbAsyncInit = function() {
-          FB.init({
-            appId      : '1844649825572339',
-            cookie     : true,
-            xfbml      : true,
-            version    : 'v3.1'
-          });
-           // console.log('initialized');
-           
-          
-            
+if($("#login").val()==="FB-Login")
+{
 
-
-
-          FB.AppEvents.logPageView();   
           FB.login(function(response) {
-            
+            console.log($("#login").val());
       if (response.authResponse) {
 
         console.log('You are logged in &amp; cookie set!'); 
@@ -267,29 +259,27 @@ deleteMarkers();
            userId = response.id;
     console.log(userId);
     ajaxGetSignature(userId);
+    $("#play").show();
+    $("#login").val("FB-Logout");
+    console.log($("#login").val());
    
 },{access_token:token});
       } 
       else {
         console.log('User cancelled login or did not fully authorize.');
+        $("#login").show();
       }
+     
     },{scope: "user_photos, manage_pages,publish_pages"});
-
-
-
-
-        };
-      
-        (function(d, s, id){
-           var js, fjs = d.getElementsByTagName(s)[0];
-           if (d.getElementById(id)) {return;}
-           js = d.createElement(s); js.id = id;
-           js.src = "https://connect.facebook.net/en_US/sdk.js";
-           fjs.parentNode.insertBefore(js, fjs);
-         }(document, 'script', 'facebook-jssdk'));
-        
-$("#play").show();
-$("#login").hide();
+  }
+  else 
+  {
+    FB.logout(function(response) {
+      $("#login").val("FB-Login");
+      $("#play").hide();
+      deleteMarkers();
+});
+  } 
   });
 
 function deletesignature()
@@ -418,8 +408,8 @@ function fbpost()
            //theCanvas = canvas;
               //  document.body.appendChild(canvas);
               //  $('body').append($('<img>').attr('src', canvas.toDataURL()));
-              var win = window.open();
-              win.document.write("<img src='"+canvas.toDataURL()+"'/>");
+              //var win = window.open();
+             // win.document.write("<img src='"+canvas.toDataURL()+"'/>");
               var data = canvas.toDataURL("image/png");
               try {
              blob = dataURItoBlob(data);
@@ -608,7 +598,37 @@ function dataURItoBlob(dataURI) {
  
  
       function initMap() {
-  
+        window.fbAsyncInit = function() {
+   
+   FB.init({
+     appId      : '1844649825572339',
+     cookie     : true,
+     xfbml      : true,
+     version    : 'v3.1'
+   });
+    //console.log('initialized');
+    
+    
+
+
+
+
+   FB.AppEvents.logPageView();   
+
+
+
+ };
+
+ (function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+
+
     //if(response.status === 'connected'){console.log('connected');}
     var styles = {
         default: null,
@@ -663,7 +683,7 @@ function dataURItoBlob(dataURI) {
         var types = document.getElementById('type-selector');
         var strictBounds = document.getElementById('strict-bounds-selector');
 
-        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+        //map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
 
         
             //alert(markers.length);
@@ -674,7 +694,7 @@ function dataURItoBlob(dataURI) {
         // Bind the map's bounds (viewport) property to the autocomplete object,
         // so that the autocomplete requests use the current map bounds for the
         // bounds option in the request.
-        autocomplete.bindTo('bounds', map);
+       // autocomplete.bindTo('bounds', map);
         /*
         var marker = new google.maps.Marker({
           map: map,
