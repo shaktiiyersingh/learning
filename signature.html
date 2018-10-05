@@ -24,7 +24,7 @@
       /* Always set the map height explicitly to define the size of the div
       * element that contains the map. */
       #map {
-        height: 75%;
+        height: 80%;
         width:100%;
       }
       /* Optional: Makes the sample page fill the window. */
@@ -135,7 +135,7 @@
   <body>
    
    
-    <div id="map" style='float:left;'></div>
+    
     
 
 
@@ -145,7 +145,7 @@
       </div>
       
 
-    <div id="summary_box" style='float:left;border:1px solid #aaa; height:18%;width:99%;margin:5px;background:darkkhaki'>
+    <div id="summary_box" style='float:left;border:1px solid #aaa; height:20%;width:99%;margin:5px;background:darkkhaki'>
         
       <div class="pac-card" id="pac-card">
             <div>
@@ -187,21 +187,18 @@
             </div>
     <div id = "timer" style = "display:none"></div>
             <div id = "rules">
-    <span> You get 60 seconds to mark your most memorable travel destinations on the map..</span>
+    <span> 60 seconds</span>
     <br>
-    <br>
-    <span>You can play again if you think you missed out marking some..</span> 
-    <br>
-    <br>
-    <span>When you are satisfied with your signature you can post it to your fb wall and share your signature with your friends</span>
-    <br>
-    <br>
+     <span>mark your most memorable travel destinations</span> 
+ <br>
+    <span>Post your signature on fb or play again to recreate it</span>
+    
       
             </div>
           </div>
     
     </div>
-
+    <div id="map" style='float:left;'></div>
     <script>
       var marker_id=-1;
       var map;
@@ -269,6 +266,7 @@ $("#fbpost").show();
       else {
         console.log('User cancelled login or did not fully authorize.');
         $("#login").show();
+        $("#fbpost").hide();
       }
      
     },{scope: "user_photos, manage_pages,publish_pages"});
@@ -320,7 +318,7 @@ function deletesignature()
 
        
         
-         var count = 60, timer = setInterval(function() {
+         var count = 10, timer = setInterval(function() {
     $("#timer").html(count--);
     if(count < 0) 
     {
@@ -330,6 +328,7 @@ function deletesignature()
          $("#pac-input").hide();
          $("#play").show();
          $("#fbpost").show();
+         $("#login").show();
          //fbpost();
          //$("#fbpost").show();
          
