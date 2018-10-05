@@ -179,9 +179,9 @@
             <div id="pac-container">
               <input id="pac-input" type="text"
                      placeholder="Enter a location" style = "display:none">
-                     <input id = "fbpost" type = "submit" value = "Post on FB">
+                     <input id = "fbpost" type = "submit" value = "Post on FB" style = "display:none">
                      <input id = "play" type = "submit" value = "Play" style = "display:none"/>
-                     <input id = "login" type = "submit" value = "FB-Login"/>
+                     <input id = "login" type = "submit" value = "FB-Login and Play"/>
                      
                      <input id = "deletePlace" type = "submit" value = "Delete Signature" style = "display:none"/>
             </div>
@@ -244,9 +244,10 @@ deleteMarkers();
   });
 
  $("#login").click(function(){
-if($("#login").val()==="FB-Login")
+if($("#login").val()==="FB-Login and Play")
 {
 
+$("#fbpost").show();
           FB.login(function(response) {
             console.log($("#login").val());
       if (response.authResponse) {
@@ -275,8 +276,9 @@ if($("#login").val()==="FB-Login")
   else 
   {
     FB.logout(function(response) {
-      $("#login").val("FB-Login");
+      $("#login").val("FB-Login and Play");
       $("#play").hide();
+      $("#fbpost").hide();
       deleteMarkers();
 });
   } 
@@ -314,6 +316,8 @@ function deletesignature()
          $("#pac-input").show();
          $("#play").hide();
          $("#fbpost").hide();
+         $("#login").hide();
+
        
         
          var count = 60, timer = setInterval(function() {
