@@ -202,6 +202,14 @@
     
      <div id="map" style='float:top;'></div>
     <script>
+
+      window.addEventListener("resize", function() {
+      if(document.activeElement.tagName=="INPUT" || document.activeElement.tagName=="TEXTAREA") {
+         window.setTimeout(function() {
+            document.activeElement.scrollIntoViewIfNeeded();
+         },0);
+      }
+   })
       var marker_id=-1;
       var map;
       var markers = new Array();
