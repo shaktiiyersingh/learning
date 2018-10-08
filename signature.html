@@ -374,7 +374,7 @@ function deletesignature()
       var nearbyMarkers=new Array();
       function createMarker(place) {
         var placeLoc = place.geometry.location;
-        var icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+        var icon="https://maps.google.com/mapfiles/ms/icons/blue-dot.png";
 
         if(last_place_search_type=="hindu_temple" || last_place_search_type=="aquarium" || last_place_search_type=="zoo" || last_place_search_type=="amusement_park" || last_place_search_type=="shopping_mall" || last_place_search_type=="art_gallery"){
           icon=icons[last_place_search_type].icon;
@@ -902,7 +902,7 @@ function retimgname(imgname)
           color: "#FFFFFF"},
           map: map,
           animation: google.maps.Animation.DROP,
-          icon: {url:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png", scaledSize: new google.maps.Size(10, 10)},
+          icon: {url:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png", scaledSize: new google.maps.Size(10, 10)},
 
         });
        
@@ -1033,7 +1033,7 @@ function ajaxGetSignature(userId)
           color: "#FFFFFF"},
           map: map,
           animation: google.maps.Animation.DROP,
-          icon: {url:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png", scaledSize: new google.maps.Size(10, 10)},
+          icon: {url:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png", scaledSize: new google.maps.Size(10, 10)},
 
         });
        // $('#postResultDiv').append('<input type="checkbox" name=' + JSON.stringify(dot.name) + '/>' + dot.name + '</br>');   
