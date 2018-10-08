@@ -66,6 +66,7 @@
         margin: 10px 10px 0 0;
         border-radius: 2px 0 0 2px;
         box-sizing: border-box;
+        z-index: -1;
         -moz-box-sizing: border-box;
         outline: none;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -146,8 +147,7 @@
       
 
     <div id="summary_box" style='float:left;border:1px solid #aaa; height:20%;width:99%;margin:5px;background:darkkhaki'>
-        
-      <div class="pac-card" id="pac-card">
+        <div class="pac-card" id="pac-card">
             <div>
               <div id="title">
                 Add your memorable travel destinations and create your travel signature
@@ -167,7 +167,7 @@
       <input type="radio" name="type" id="changetype-geocode">
       <label for="changetype-geocode">Geocodes</label>
               </div>
-
+    
       
           
               <div id="strict-bounds-selector" class="pac-controls">
@@ -190,15 +190,17 @@
     <span> 60 seconds</span>
     <br>
      <span>mark your most memorable travel destinations</span> 
- <br>
+    <br>
     <span>Post your signature on fb or play again to recreate it</span>
     
       
             </div>
           </div>
-    
+       
+      
     </div>
-    <div id="map" style='float:left;'></div>
+    
+     <div id="map" style='float:top;'></div>
     <script>
       var marker_id=-1;
       var map;
@@ -688,7 +690,7 @@ function dataURItoBlob(dataURI) {
 
         //map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
 
-        
+     
             //alert(markers.length);
       //showLine(markers);
         
