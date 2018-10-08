@@ -145,62 +145,62 @@
        
       </div>
       
-
-    <div id="summary_box" style='float:left;border:1px solid #aaa; height:20%;width:99%;margin:5px;background:darkkhaki'>
-        <div class="pac-card" id="pac-card">
-            <div>
-              <div id="title">
-                Add your memorable travel destinations and create your travel signature
-              </div>
-              <!--
-              <div id="type-selector" class="pac-controls">
-                
-                <input type="radio" name="type" id="changetype-all" checked="checked">
-                <label for="changetype-all">All</label>
-      
-                <input type="radio" name="type" id="changetype-establishment">
-                <label for="changetype-establishment">Establishments</label>
+      <div id="map" style='float:top;'></div>
+      <div class="pac-card" id="pac-card">
+          <div>
+            <div id="title">
+              Add your memorable travel destinations (India) and create your travel signature
+            </div>
+            <!--
+            <div id="type-selector" class="pac-controls">
               
-      <input type="radio" name="type" id="changetype-address">
-      <label for="changetype-address">Addresses</label>
-      
-      <input type="radio" name="type" id="changetype-geocode">
-      <label for="changetype-geocode">Geocodes</label>
-              </div>
+              <input type="radio" name="type" id="changetype-all" checked="checked">
+              <label for="changetype-all">All</label>
     
-      
-          
-              <div id="strict-bounds-selector" class="pac-controls">
-                <input type="checkbox" id="use-strict-bounds" value="">
-                <label for="use-strict-bounds">Strict Bounds</label>
-              </div>
-              -->
-            </div>
-            <div id="pac-container">
-              <input id="pac-input" type="text"
-                     placeholder="Enter a location" style = "display:none">
-                     <input id = "fbpost" type = "submit" value = "Post on FB" style = "display:none">
-                     <input id = "play" type = "submit" value = "Play" style = "display:none"/>
-                     <input id = "login" type = "submit" value = "FB-Login and Play"/>
-                     
-                     <input id = "deletePlace" type = "submit" value = "Delete Signature" style = "display:none"/>
-            </div>
-    <div id = "timer" style = "display:none"></div>
-            <div id = "rules">
-    <span> 60 seconds</span>
-    <br>
-     <span>mark your most memorable travel destinations</span> 
-    <br>
-    <span>Post your signature on fb or play again to recreate it</span>
+              <input type="radio" name="type" id="changetype-establishment">
+              <label for="changetype-establishment">Establishments</label>
+            
+    <input type="radio" name="type" id="changetype-address">
+    <label for="changetype-address">Addresses</label>
     
-      
+    <input type="radio" name="type" id="changetype-geocode">
+    <label for="changetype-geocode">Geocodes</label>
             </div>
+  
+    
+        
+            <div id="strict-bounds-selector" class="pac-controls">
+              <input type="checkbox" id="use-strict-bounds" value="">
+              <label for="use-strict-bounds">Strict Bounds</label>
+            </div>
+            -->
           </div>
-       
-      
+          <div id="pac-container">
+            <input id="pac-input" type="text"
+                   placeholder="Enter a location" style = "display:none">
+                   <input id = "fbpost" type = "submit" value = "Post on FB" style = "display:none">
+                   <input id = "play" type = "submit" value = "Play" style = "display:none"/>
+                   <input id = "login" type = "submit" value = "FB-Login and Play"/>
+                   
+                   <input id = "deletePlace" type = "submit" value = "Delete Signature" style = "display:none"/>
+          </div>
+  <div id = "timer" style = "display:none"></div>
+          <div id = "rules">
+  <span> 60 seconds</span>
+  <br>
+   <span>mark your most memorable travel destinations</span> 
+  <br>
+  <span>Post your signature on fb or play again to recreate it</span>
+  
+    
+          </div>
+        </div>
+     
+    <div id="summary_box" style='display:none;float:left;border:1px solid #aaa; height:20%;width:99%;margin:5px;background:darkkhaki'>
+        
     </div>
     
-     <div id="map" style='float:top;'></div>
+     
     <script>
 
       window.addEventListener("resize", function() {
@@ -328,7 +328,7 @@ function deletesignature()
 
        
         
-         var count = 10, timer = setInterval(function() {
+         var count = 60, timer = setInterval(function() {
     $("#timer").html(count--);
     if(count < 0) 
     {
@@ -703,6 +703,9 @@ function dataURItoBlob(dataURI) {
       //showLine(markers);
         
         var autocomplete = new google.maps.places.Autocomplete(input);
+        
+        autocomplete.setComponentRestrictions(
+            {'country': ['in']});
 
         // Bind the map's bounds (viewport) property to the autocomplete object,
         // so that the autocomplete requests use the current map bounds for the
