@@ -57,6 +57,7 @@ router.post('/deletesignature', function(req, res) {
     else{
     var db = client.db('mondb');
     var myquery = { userId:userId };
+    console.log(myquery);
     db.collection("dots").deleteMany(myquery, function(err, delOK) {
       if (err) 
       {
