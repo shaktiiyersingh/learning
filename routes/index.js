@@ -65,7 +65,7 @@ router.post('/deletesignature', function(req, res) {
       }
       if (delOK) 
       {
-        console.log("Collection deleted");
+        console.log(delOK.result.n + "records deleted");
         return res.send("deleted");
       }
       
