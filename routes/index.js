@@ -56,7 +56,8 @@ router.post('/deletesignature', function(req, res) {
     if(err){console.log('connection not happening');}
     else{
     var db = client.db('mondb');
-    db.collection("dots").drop(function(err, delOK) {
+    var myquery = { userId:userId };
+    db.collection("dots").deleteMany(myquery, function(err, delOK) {
       if (err) 
       {
       console.log("no collection found to delete");
@@ -101,6 +102,7 @@ router.post('/deletesignature', function(req, res) {
   });
 });
 
+
 router.get('/drawsignature', function(req, res) {
 // console.log(req.query.userId);
   var userId = req.query.userId;
@@ -111,8 +113,9 @@ router.get('/drawsignature', function(req, res) {
     else{
     var db = client.db('mondb');
    var collection = db.collection('dots');
-   collection.find({},{ userId: userId }).toArray(function(err,result){
-     if(err){}
+   var query = {userId: userId};
+   collection.find(query).toArray(function(err, result){
+     if(err){console.log(err);}
      else {
       return res.send(result);
       //res.render('studentlist',{"studentlist":result});
@@ -242,7 +245,7 @@ router.post('/addDot', function(req, res) {
     if(err){console.log('connection not happening');}
     else{
     var db = client.db('mondb');
-    var dot = {lat:req.body.lat, lng:req.body.lng,name:req.body.name};
+    var dot = {lat:req.body.lat, lng:req.body.lng,name:req.body.name,userId:req.body.userId};
     /*
     db.createCollection("dots",function(err,res){if(err)console.log("collection already exists");});
         var dots = db.collection('dots');
