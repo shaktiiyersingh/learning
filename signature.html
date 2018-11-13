@@ -294,19 +294,24 @@ $("#fbpost").show();
 
 function deletesignature()
 {
-  $.ajax({  
-        url: "/deletesignature",
-        type: 'POST',
-        data : JSON.stringify({"userId":userId}),
+  var user = {"userId": userId};
+ console.log(JSON.stringify(user));
+ $.ajax({
+                type : "POST",
+                contentType : "application/json",
+                url : '/deletesignature',
+                data : JSON.stringify(user),
                 dataType : 'json',
-    
-        success: function (res) {  
-            console.log(res);
-        } , 
-        error: function (res) {  
-            console.log(res);
-        } 
-    });
+                success : function(result) {
+                         console.log(result);
+                              
+                },
+                error : function(e) {
+                 
+                  console.log("ERROR: ", e);
+                }
+              });
+
   // initMap();
     //ajaxGetSignature(userId);
 }

@@ -1,9 +1,12 @@
+var fs = require('fs');
+
 var express = require('express');
+//var app = require('https-localhost');
 var router = express.Router();
 var mongodb = require('mongodb');
 var passport = require('passport');
 var find = require('find');
-var fs = require('fs');
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   
@@ -49,7 +52,7 @@ router.get('/viewimage', function(req, res) {
 });
 
 router.post('/deletesignature', function(req, res) {
-  var userId = req.query.userId;
+  var userId = req.body.userId;
   var MongoClient = mongodb.MongoClient;
   var url = 'mongodb://monuser:monpass999@ds245150.mlab.com:45150/mondb';
   MongoClient.connect(url,function(err,client){
