@@ -25,7 +25,7 @@ app.set('port', port);
  * Create HTTP server.
  */
 console.log('Run on https');
-var server = https.createServer(options, app).listen(8080);
+var server = https.createServer(options, app).listen(process.env.PORT || 8080);
 //var server = http.createServer(app);
 
 /**
